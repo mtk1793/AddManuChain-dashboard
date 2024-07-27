@@ -1,34 +1,55 @@
-import streamlit as st
-import pandas as pd
-import seaborn as sns
-import numpy as np
+import json
+
 import matplotlib.pyplot as plt
-from io import StringIO
+import numpy as np
+import seaborn as sns
+import streamlit as st
+from PIL import Image
 
-st.title(":zap: AddManuChain Dashboard")
-st.image("../src/img/title.jpg", caption="Sunrise by the mountains")
-with st.expander("Statistics"):
-    uploaded_file = st.file_uploader("Choose a file")
-    if uploaded_file is not None:
-        # To convert to a string based IO:
-        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
-        string_data = stringio.read()
-        st.write(string_data)
 
-        # You can uncomment and use json.loads if your file is in JSON format
-        # data = json.loads(string_data)
-        # st.json(data)
+# Login
+login_option = st.sidebar.radio('Login/Singup', ('Login', 'Singup'))
+if login_option == 'Login':
+    with st.sidebar.form("login"):
+        st.write("Login Here.")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
 
-        # Assuming the uploaded file is a CSV for the following example
-        df = pd.read_csv(StringIO(string_data))
-        st.write(df.head())  # Display the first few rows of the dataframe
+        # Every form must have a submit button.
+        submitted = st.form_submit_button("Login")
+        if submitted:
+            pass
+else:
+    with st.sidebar.form("signup"):
+        st.write("Singup Here.")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        email = st.text_input("Email")
 
-    # Plotting a histogram using seaborn
-    fig, ax = plt.subplots(1, 1, figsize=(5, 3))
+        # Every form must have a submit button.
+        submitted = st.form_submit_button("Singup")
+        if submitted:
+            pass
+
+# Banner
+banner = Image.open('img/title.jpg')
+st.image(banner)
+st.title(':zap: AddManuChain Dashboard')
+
+# Metrics
+col1, col2 = st.columns(2)
+col1.metric(label="AddManuChain Telegram Members", value="4800", delta="+100")
+col2.metric(label="AddManuChain Website Members", value="2102", delta="+10")
+
+# Statistics
+with st.expander('Statistics'):
+    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
     sns.histplot(np.random.randn(100), ax=ax)
     st.pyplot(fig)
-with st.expander('User Profile'):
+
+# User Info
+with st.expander('User Profile:'):
     col1, col2 = st.columns(2)
-    col1.text_input('Name :')
-    col2.text_input('Family :')
+    col1.text_input('Name:')
+    col2.text_input('Location:')
     st.camera_input('Camera Input', key='camera_input')
